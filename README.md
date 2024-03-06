@@ -172,7 +172,7 @@ let savedPeople: [Person] = try! coreDataManager.getObjects()
 
 In some cases you might want to filter the results returned by the CoreData layer.  
 JSCoreData makes it easy to do this with our beloved (or not beloved) `NSPredicate` object!  
-When using JSCoreDataManager, you can specify a predicate to filter results as follows:
+When using JSCoreData, you can specify a predicate to filter results as follows:
 
 ```swift
 let predicate = NSPredicate(format: "age > %i", 30)
