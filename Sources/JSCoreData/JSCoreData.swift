@@ -53,16 +53,30 @@ final public class JSCoreData {
     }
 
     // MARK: - Save
-    // Save
+    // Save object
     public func setObject<T: JSCoreDataCodable>(_ object: T) throws {
         try setObject(object, inContext: viewContext)
     }
 
-    // Save in background
+    // Save objects
+    public func setObjects<T: JSCoreDataCodable>(_ objects: [T]) throws {
+        for object in objects {
+            try setObject(object)
+        }
+    }
+
+    // Save object in background
     public func setObjectInBackground<T: JSCoreDataCodable>(_ object: T) async throws {
         try await backgroundContext.perform { [weak self] in
             guard let self else { return }
             try self.setObject(object, inContext: self.backgroundContext)
+        }
+    }
+
+    // Save objects in background
+    public func setObjectsInBackground<T: JSCoreDataCodable>(_ objects: [T]) async throws {
+        for object in objects {
+            try await setObjectInBackground(object)
         }
     }
 
