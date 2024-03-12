@@ -28,6 +28,7 @@ final public class JSCoreData {
     private lazy var viewContext: NSManagedObjectContext = {
         let context = persistentContainer.viewContext
         context.mergePolicy = mergePolicy
+        context.automaticallyMergesChangesFromParent = true
         return context
     }()
     
@@ -35,6 +36,7 @@ final public class JSCoreData {
     private lazy var backgroundContext: NSManagedObjectContext = {
         let context = persistentContainer.newBackgroundContext()
         context.mergePolicy = mergePolicy
+        context.automaticallyMergesChangesFromParent = true
         return context
     }()
 
