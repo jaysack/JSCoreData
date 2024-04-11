@@ -42,15 +42,15 @@ final public class JSCoreData {
 
     // MARK: - Get
     // Get
-    public func getObjects<T: JSCoreDataCodable>(matching predicate: NSPredicate? = nil) throws -> [T] {
-        return try getObjects(matching: predicate, inContext: viewContext)
+    public func getObjects<T: JSCoreDataCodable>(matching predicate: NSPredicate? = nil, limit: Int? = nil) throws -> [T] {
+        return try getObjects(matching: predicate, limit: limit, inContext: viewContext)
     }
     
     // Get in background
-    public func getObjectsInBackground<T: JSCoreDataCodable>(matching predicate: NSPredicate? = nil) async throws -> [T] {
+    public func getObjectsInBackground<T: JSCoreDataCodable>(matching predicate: NSPredicate? = nil, limit: Int? = nil) async throws -> [T] {
         try await backgroundContext.perform { [weak self] in
             guard let self else { return [] }
-            return try self.getObjects(matching: predicate, inContext: self.backgroundContext)
+            return try self.getObjects(matching: predicate, limit: limit, inContext: self.backgroundContext)
         }
     }
 
@@ -133,11 +133,14 @@ public enum JSCoreDataError: Error {
 // MARK: - EXT. Helper Methods
 private extension JSCoreData {
     // Get
-    func getObjects<T: JSCoreDataCodable>(matching predicate: NSPredicate? = nil, inContext context: NSManagedObjectContext) throws -> [T] {
+    func getObjects<T: JSCoreDataCodable>(matching predicate: NSPredicate?, limit: Int?, inContext context: NSManagedObjectContext) throws -> [T] {
         // Set fetch request
         let fetchRequest = NSFetchRequest<T.CoreDataModel>(entityName: T.entityName)
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = T.CoreDataModel.sortDescriptors
+        if let limit {
+            fetchRequest.fetchLimit = limit
+        }
         
         return try context
             .fetch(fetchRequest)
